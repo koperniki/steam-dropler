@@ -105,6 +105,16 @@ namespace steam_dropler.Model
                 MobileAuth = new MobileAuth {SharedSecret = obj.SharedSecret};
             }
 
+            if (IdleNow )
+            {
+                IdleNow = false;
+                if ((DateTime.UtcNow - LastRun.Value).TotalHours < 10)
+                {
+                    LastRun = DateTime.MinValue;
+                }
+            }
+
+
             Name = Path.GetFileNameWithoutExtension(path);
             FilePath = path;
         }
