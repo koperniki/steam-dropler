@@ -3,18 +3,21 @@
 Основаная идея основана на https://github.com/kokole/SteamItemDropIdler
 <br>Основаня реализация осуществленна с помощью https://github.com/SteamRE/SteamKit
 
-На данный момент работатет только для аккаунтов с файлами от https://github.com/Jessecar96/SteamDesktopAuthenticator, т.е .maFile
+На данный момент работатет для аккаунтов с файлами от https://github.com/Jessecar96/SteamDesktopAuthenticator, т.е .maFile
+
+Так же с shared_secret (из тех же maFile)
 
 ## Настройка
 Для начала ставим .net runtime (https://dotnet.microsoft.com/download/dotnet-core/2.1)  или более позднию версию
 
 В директории бота *\Configs\Accounts создаем файлы конфигурации для ботов:
- - Имя файла должно быть именем аккаунта steam
+ - Имя файла должно быть именем аккаунта steam, расширение .json
  - Тело бота следующее:
  ```
 {
   "Password":"пароль_от_акка",
   "IdleEnable":true, //флаг того что аккаунт должен идлиться, false - бот не будет запускать дроп для этого аккаунта
+  "SharedSecret":"SDDDONDPyaBSnIJS0PjDMpImcpE=",//открытый ключ для аутентификации, если null то будет искать .maFile
   "DropConfig":[
     {"Item1":id_игры, "Item2":id_дропа}, 
     {"Item1":id_игры, "Item2":id_дропа}
