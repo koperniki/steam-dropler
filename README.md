@@ -8,7 +8,7 @@
 Так же с shared_secret (из тех же maFile)
 
 ## Настройка
-Для начала ставим .net runtime (https://dotnet.microsoft.com/download/dotnet-core/2.1)  или более позднию версию
+Для начала ставим .net runtime (https://dotnet.microsoft.com/download/thank-you/dotnet-runtime-2.2.5-windows-hosting-bundle-installer)  или более позднию версию
 
 В директории бота *\Configs\Accounts создаем файлы конфигурации для ботов:
  - Имя файла должно быть именем аккаунта steam, расширение .json
