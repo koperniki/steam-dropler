@@ -66,7 +66,10 @@
  
 ### если будет желание поблагодарить 
 yandex:410011375178916
+
 bitcoin:3M2m8hLu9w7Z4fonBESafL8SZPfq5SRYBC
+
+qiwi.com/p/79234293663
 
 
 
