@@ -63,8 +63,8 @@ namespace steam_dropler.Steam
 
         void OnConnected(SteamClient.ConnectedCallback callback)
         {
-           // Console.WriteLine("Connected to Steam! Logging in '{0}'...", _steamAccount.UserName);
-            _steamAccount.SteamId = _client.SteamID;
+            Console.WriteLine("Connected to Steam! Logging in '{0}'...", _steamAccount.Name);
+            
             byte[] sentryHash = null;
             string loginKey = null;
             if (_steamAccount.SentryHash != null)
@@ -101,6 +101,7 @@ namespace steam_dropler.Steam
 
         void OnLoggedOn(SteamUser.LoggedOnCallback callback)
         {
+            _steamAccount.SteamId = _client.SteamID;
             bool isSteamGuard = callback.Result == EResult.AccountLogonDenied;
             bool is2Fa = callback.Result == EResult.AccountLoginDeniedNeedTwoFactor;
             tryLoginCount++;
@@ -143,11 +144,11 @@ namespace steam_dropler.Steam
                 Console.WriteLine("Unable to logon to Steam: {0} / {1}", callback.Result, callback.ExtendedResult);
                 return;
             }
- 
-
-            _loginTcs?.SetResult(callback.Result);
 
             Console.WriteLine("Successfully logged on!");
+            _loginTcs?.SetResult(callback.Result);
+
+            
 
 
 
@@ -163,7 +164,7 @@ namespace steam_dropler.Steam
 
         void OnMachineAuth(SteamUser.UpdateMachineAuthCallback callback)
         {
-            Console.WriteLine("Updating sentryfile...");
+           // Console.WriteLine("Updating sentryfile...");
 
             int fileSize;
             byte[] sentryHash;
@@ -200,7 +201,7 @@ namespace steam_dropler.Steam
                 SentryFileHash = sentryHash,
             });
 
-            Console.WriteLine("Done!");
+            //Console.WriteLine("Done!");
         }
 
     }

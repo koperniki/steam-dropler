@@ -62,14 +62,23 @@ namespace steam_dropler
 
             TaskDictionary[id] = Task.Run(async () =>
             {
-                var machine = new SteamMachine(account);
-                var result = await machine.EasyIdling();
-                if (result != EResult.OK)
+                try
                 {
-                    Console.WriteLine($"not login {result}");
+                    var machine = new SteamMachine(account);
+                    var result = await machine.EasyIdling();
+                    if (result != EResult.OK)
+                    {
+                        Console.WriteLine($"not login {result}");
+                    }
+                    machine.LogOf();
+                    TaskDictionary.Remove(id);
                 }
-                machine.LogOf();
-                TaskDictionary.Remove(id);
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
+                
             });
 
 
