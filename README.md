@@ -3,7 +3,8 @@
 Основаная идея основана на https://github.com/kokole/SteamItemDropIdler
 <br>Основаня реализация осуществленна с помощью https://github.com/SteamRE/SteamKit
 
-На данный момент работатет только для аккаунтов с файлами от https://github.com/Jessecar96/SteamDesktopAuthenticator, т.е .maFile
+На данный момент работатет для аккаунтов с файлами от https://github.com/Jessecar96/SteamDesktopAuthenticator, т.е .maFile
+
 Так же с shared_secret (из тех же maFile)
 
 ## Настройка
