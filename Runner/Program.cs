@@ -7,8 +7,19 @@ namespace Runner
     {
         static void Main(string[] args)
         {
-            Worker.Run();
-            Console.ReadKey(true);
+
+            try
+            {
+                Worker.Run();
+                Console.ReadKey(true);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            
+           
         }
     }
 }
