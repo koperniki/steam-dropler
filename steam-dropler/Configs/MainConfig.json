@@ -1,5 +1,5 @@
 {
-  "maFileFolder": "C:\\Users\\Koper\\Desktop\\sda\\maFiles",
-  "dropHistoryFolder": "D:\\DropHistory",
+  "maFileFolder": "C:/Users/Koper/Desktop/sda/maFiles",//cahnge yot folder
+  "dropHistoryFolder": "D:/DropHistory",//test
   "parallelCount": 100 
 }
