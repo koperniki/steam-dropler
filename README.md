@@ -15,6 +15,7 @@
 {
   "Password":"пароль_от_акка",
   "IdleEnable":true, //флаг того что аккаунт должен идлиться, false - бот не будет запускать дроп для этого аккаунта
+  "SharedSecret":"SDDDONDPyaBSnIJS0PjDMpImcpE=",//открытый ключ для аутентификации, если null то будет искать .maFile
   "DropConfig":[
     {"Item1":id_игры, "Item2":id_дропа}, 
     {"Item1":id_игры, "Item2":id_дропа}
