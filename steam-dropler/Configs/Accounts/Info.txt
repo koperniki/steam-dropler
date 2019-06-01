@@ -1,0 +1,8 @@
+﻿Minimal config file 
+create account_name.json with body
+{"Password":"account pass","IdleEnable":true, "DropConfig":[{"Item1":gameId, "Item2":dropId}, {"Item1":gameId, "Item2":dropId}]}
+
+
+Минимальный файл конфигурации
+создаем файл с именем аккаунта account_name.json c телом
+{"Password":"пароль_от_акка","IdleEnable":true, "DropConfig":[{"Item1":id_игры, "Item2":id_дропа}, {"Item1":id_игры, "Item2":id_дропа}]}
