@@ -4,6 +4,7 @@
 <br>Основаня реализация осуществленна с помощью https://github.com/SteamRE/SteamKit
 
 На данный момент работатет только для аккаунтов с файлами от https://github.com/Jessecar96/SteamDesktopAuthenticator, т.е .maFile
+Так же с shared_secret (из тех же maFile)
 
 ## Настройка
 Для начала ставим .net runtime (https://dotnet.microsoft.com/download/dotnet-core/2.1)  или более позднию версию
