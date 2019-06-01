@@ -20,7 +20,9 @@
   "SharedSecret":"SDDDONDPyaBSnIJS0PjDMpImcpE=",//открытый ключ для аутентификации, если null то будет искать .maFile
   "DropConfig":[
     {"Item1":id_игры, "Item2":id_дропа}, 
-    {"Item1":id_игры, "Item2":id_дропа}
+    {"Item1":id_игры, "Item2":id_дропа},
+    ........
+    {"Item1":id_игры, "Item2":id_дропа}//до 32 конфигов
   ]
 }
 ```
