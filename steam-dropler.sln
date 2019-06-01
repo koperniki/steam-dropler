@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.168
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "steam-dropler", "steam-dropler\steam-dropler.csproj", "{ECFB9955-D5ED-4B56-9E55-BD8D755847C4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ECFB9955-D5ED-4B56-9E55-BD8D755847C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECFB9955-D5ED-4B56-9E55-BD8D755847C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECFB9955-D5ED-4B56-9E55-BD8D755847C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECFB9955-D5ED-4B56-9E55-BD8D755847C4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B2FCECF8-AB04-4580-A415-F09946FBC020}
+	EndGlobalSection
+EndGlobal
