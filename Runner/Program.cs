@@ -16,6 +16,7 @@ namespace Runner
             try
             {
                 Worker.Run();
+                Console.WriteLine("Press ctrl+c to exit...");
                 exitEvent.WaitOne();
             }
             catch (Exception e)

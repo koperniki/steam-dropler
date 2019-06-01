@@ -28,6 +28,8 @@ namespace steam_dropler
             _timer = new Timer(1000 * 30);
             _timer.Elapsed += CheckToAdd;
             _timer.Start();
+            Console.WriteLine("Аккаунты запускаются с переодичностью 30 секунд.");
+            Console.WriteLine($"Всего аккаунтов {_accounts.Count}, будут фармиться {_accounts.Count(t=>t.IdleEnable && t.MobileAuth?.SharedSecret!=null)}");
 
         }
 
@@ -53,6 +55,7 @@ namespace steam_dropler
             {
                 AddToIdlingQueue(steamaccont);
             }
+
         }
 
 
