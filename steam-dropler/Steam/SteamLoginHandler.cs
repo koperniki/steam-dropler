@@ -63,7 +63,7 @@ namespace steam_dropler.Steam
 
         void OnConnected(SteamClient.ConnectedCallback callback)
         {
-            Console.WriteLine("Connected to Steam! Logging in '{0}'...", _steamAccount.Name);
+            Console.Write("Connected to Steam! Logging in '{0}'...", _steamAccount.Name);
             
             byte[] sentryHash = null;
             string loginKey = null;
@@ -101,7 +101,7 @@ namespace steam_dropler.Steam
 
         void OnLoggedOn(SteamUser.LoggedOnCallback callback)
         {
-            
+            Console.WriteLine(callback.Result);
             bool isSteamGuard = callback.Result == EResult.AccountLogonDenied;
             bool is2Fa = callback.Result == EResult.AccountLoginDeniedNeedTwoFactor;
             tryLoginCount++;
@@ -118,7 +118,10 @@ namespace steam_dropler.Steam
                 {
 
                     _twoFactorAuth = _steamAccount.MobileAuth.GenerateSteamGuardCode();
-
+                    if (_twoFactorAuth == null)
+                    {
+                        Console.WriteLine($"{_steamAccount.Name}: MobileSteamGuard настроен не верно");
+                    }
                 }
                 else
                 {
