@@ -101,7 +101,7 @@ namespace steam_dropler.Steam
 
         void OnLoggedOn(SteamUser.LoggedOnCallback callback)
         {
-            _steamAccount.SteamId = _client.SteamID;
+            
             bool isSteamGuard = callback.Result == EResult.AccountLogonDenied;
             bool is2Fa = callback.Result == EResult.AccountLoginDeniedNeedTwoFactor;
             tryLoginCount++;
@@ -144,7 +144,7 @@ namespace steam_dropler.Steam
                 Console.WriteLine("Unable to logon to Steam: {0} / {1}", callback.Result, callback.ExtendedResult);
                 return;
             }
-
+            _steamAccount.SteamId = _client.SteamID;
             Console.WriteLine("Successfully logged on!");
             _loginTcs?.SetResult(callback.Result);
 

@@ -122,7 +122,8 @@ namespace steam_dropler
 		    }
 		    else
 		    {
-			    throw new Exception("MaFile folder not exist");
+                _mobileAuths = new Dictionary<string, MobileAuth>();
+			    Console.WriteLine("MaFile folder not exist");
 		    }
 
 		}

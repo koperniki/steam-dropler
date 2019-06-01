@@ -62,6 +62,11 @@ namespace steam_dropler.Model
         public byte[] SentryHash { get; set; }
 
         /// <summary>
+        /// Упрощенный вход sda
+        /// </summary>
+        public string SharedSecret { get; set; }
+
+        /// <summary>
         /// Правила дропа
         /// </summary>
         public List<(uint, ulong)> DropConfig { get; set; }
@@ -94,7 +99,11 @@ namespace steam_dropler.Model
             LoginKey = obj.LoginKey;
             IdleNow = obj.IdleNow;
             LastRun = obj.LastRun ?? DateTime.MinValue;
-
+            SharedSecret = obj.SharedSecret;
+            if (SharedSecret != null)
+            {
+                MobileAuth = new MobileAuth {SharedSecret = obj.SharedSecret};
+            }
 
             Name = Path.GetFileNameWithoutExtension(path);
             FilePath = path;
