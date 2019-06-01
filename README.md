@@ -30,8 +30,8 @@
 В директории бота *\Configs редактируем MainConfig.json:
  ```
 {
-  "maFileFolder": "путь до файлов sda\maFiles",
-  "dropHistoryFolder": "D:\\директория для склада истории дропа", 
+  "maFileFolder": "путь до файлов maFiles",
+  "dropHistoryFolder": "директория для склада истории дропа", 
   "parallelCount": 100 // количество одновремено запущенных аккаунтов
 }
 
