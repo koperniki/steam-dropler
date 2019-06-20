@@ -78,29 +78,25 @@ namespace steam_dropler.Steam
 
                 if (appId.Any())
                 {
-                    PlayGames(appId);
-                    await CheckTimeItemsList(_steamAccount.DropConfig);
-                    Thread.Sleep(1000 * 60 * 30);
-                    PlayGames(appId);
-                    Thread.Sleep(1000 * 60 * 30);
+
+
+                    for (int i = 0; i < _steamAccount.TimeConfig.IdleTime / 30; i++)
+                    {
+                        PlayGames(appId);
+                        await CheckTimeItemsList(_steamAccount.DropConfig);
+                        Thread.Sleep(1000 * 60 * 30);
+                    }
                     await CheckTimeItemsList(_steamAccount.DropConfig);
                     StopGame();
                 }
 
+                
                 _steamAccount.IdleNow = false;
                 _steamAccount.Save();
             }
 
             return res;
         }
-
-
-
-
-
-       
-
-
 
 
 

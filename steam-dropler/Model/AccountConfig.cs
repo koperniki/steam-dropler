@@ -74,6 +74,10 @@ namespace steam_dropler.Model
         [JsonIgnore]
         public List<uint> AppIds => DropConfig?.Select(t=>t.Item1).ToList();
 
+        /// <summary>
+        /// Время дропа
+        /// </summary>
+        public TimeConfig TimeConfig { get; set; }
         
 
         /// <summary>
@@ -116,6 +120,7 @@ namespace steam_dropler.Model
 
 
             Name = Path.GetFileNameWithoutExtension(path);
+            TimeConfig = obj.TimeConfig ?? MainConfig.Config.TimeConfig ?? new TimeConfig {IdleTime = 60,  PauseBeatwinIdleTime = 660} ;
             FilePath = path;
         }
 

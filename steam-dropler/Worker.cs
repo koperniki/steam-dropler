@@ -48,8 +48,9 @@ namespace steam_dropler
             {
                 return;
             }
- 
-            var steamaccont = _accounts.FirstOrDefault(t => t.LastRun < DateTime.UtcNow.AddHours(-12) & t.IdleEnable);
+
+            var steamaccont = _accounts.FirstOrDefault(t =>
+                t.LastRun < DateTime.UtcNow.AddHours(-t.TimeConfig.PauseBeatwinIdleTime) & t.IdleEnable && !t.IdleNow);
 
             if (steamaccont != null)
             {

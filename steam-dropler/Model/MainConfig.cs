@@ -18,6 +18,7 @@ namespace steam_dropler.Model
 
         public int ParallelCount { get; set; }
 
+        public TimeConfig TimeConfig { get; set; }
 
         public static void Load()
         {
