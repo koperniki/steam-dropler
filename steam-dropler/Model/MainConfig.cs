@@ -20,6 +20,8 @@ namespace steam_dropler.Model
 
         public TimeConfig TimeConfig { get; set; }
 
+        public int StartTimeOut { get; set; }
+
         public static void Load()
         {
             var obj = JsonConvert.DeserializeObject<MainConfig>(File.ReadAllText(ConfigPath));

@@ -2,6 +2,7 @@
   "maFileFolder": "C:/Users/Koper/Desktop/sda/maFiles",//cahnge you folder
   "dropHistoryFolder": "/DropHistory",//change you folder
   "parallelCount": 100,
+  "startTimeOut": 30, 
   "timeConfig": {
     "IdleTime": 60,
     "PauseBeatwinIdleTime" : 660 
