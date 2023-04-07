@@ -58,6 +58,7 @@ namespace steam_dropler.Steam
 
             if (_steamAccount.AccessToken != null)
             {
+                _refreshToken = _steamAccount.AccessToken;
                 _sUser.LogOn(new SteamUser.LogOnDetails
                 {
                     Username = _steamAccount.Name,
