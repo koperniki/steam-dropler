@@ -97,17 +97,24 @@ namespace steam_dropler.Steam
                     WebsiteID = "Client",
                     Authenticator = auth,
                 });
-                
-                var pollResponse = await authSession.PollingWaitForResultAsync();
-                _refreshToken = pollResponse.RefreshToken;
-                _sUser.LogOn(new SteamUser.LogOnDetails
-                {
-                    Username = pollResponse.AccountName,
-                    AccessToken = pollResponse.RefreshToken,
-                    ShouldRememberPassword = true
-                });
-            }
 
+                try
+                {
+                    var pollResponse = await authSession.PollingWaitForResultAsync();
+                    _refreshToken = pollResponse.RefreshToken;
+                    _sUser.LogOn(new SteamUser.LogOnDetails
+                    {
+                        Username = pollResponse.AccountName,
+                        AccessToken = pollResponse.RefreshToken,
+                        ShouldRememberPassword = true
+                    });
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Exception while logon to Steam: {0}", e.Message);
+                    _loginTcs?.TrySetResult(EResult.UnexpectedError);
+                }
+            }
         }
 
 
