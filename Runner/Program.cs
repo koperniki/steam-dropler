@@ -2,9 +2,9 @@
 using System.Threading;
 using steam_dropler;
 
-namespace Runner
+namespace NewRunner
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
@@ -24,8 +24,6 @@ namespace Runner
                 Console.WriteLine(e);
                 throw;
             }
-            
-           
         }
     }
 }

@@ -50,22 +50,17 @@ namespace steam_dropler.Model
         /// Путь до файла настроек 
         /// </summary>
         private string FilePath { get; }
-
-        /// <summary>
-        /// Ключ для авторизации
-        /// </summary>
-        public string LoginKey { get; set; }
-
-        /// <summary>
-        /// Hash для входа
-        /// </summary>
-        public byte[] SentryHash { get; set; }
-
+    
         /// <summary>
         /// Упрощенный вход sda
         /// </summary>
         public string SharedSecret { get; set; }
-
+        
+        /// <summary>
+        /// Токен для входа
+        /// </summary>
+        public string AccessToken { get; set; }
+        
         /// <summary>
         /// Правила дропа
         /// </summary>
@@ -78,8 +73,13 @@ namespace steam_dropler.Model
         /// Время дропа
         /// </summary>
         public TimeConfig TimeConfig { get; set; }
-        
 
+
+        /// <summary>
+        /// Способ авторизации
+        /// </summary>
+        public AuthType AuthType { get; set; } = AuthType.WithSecretKey;
+        
         /// <summary>
         /// Конструктор для json
         /// </summary>
@@ -99,11 +99,11 @@ namespace steam_dropler.Model
             SteamId = obj.SteamId;
             IdleEnable = obj.IdleEnable;
             DropConfig = obj.DropConfig ?? new List<(uint, ulong)>();
-            SentryHash = obj.SentryHash;
-            LoginKey = obj.LoginKey;
             IdleNow = obj.IdleNow;
             LastRun = obj.LastRun ?? DateTime.MinValue;
+            AccessToken = obj.AccessToken;
             SharedSecret = obj.SharedSecret;
+            AuthType = obj.AuthType;
             if (SharedSecret != null)
             {
                 MobileAuth = new MobileAuth {SharedSecret = obj.SharedSecret};

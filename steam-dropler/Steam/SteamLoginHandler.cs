@@ -1,11 +1,11 @@
 ﻿using System;
-using System.IO;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using steam_dropler.Model;
 using SteamKit2;
+using SteamKit2.Authentication;
 using SteamKit2.Discovery;
+using SteamKit2.Internal;
 
 namespace steam_dropler.Steam
 {
@@ -14,14 +14,13 @@ namespace steam_dropler.Steam
         private readonly SteamClient _client;
         private readonly SteamUser _sUser;
         private int tryLoginCount;
-        private string _authCode;
-        private string _twoFactorAuth;
 
         private readonly AccountConfig _steamAccount;
 
         private readonly TaskCompletionSource<EResult> _loginTcs;
 
         private ServerRecord _serverRecord;
+        private string _refreshToken;
 
         public ServerRecord ServerRecord => _serverRecord;
 
@@ -39,8 +38,6 @@ namespace steam_dropler.Steam
             manager.Subscribe<SteamClient.DisconnectedCallback>(OnDisconnected);
             manager.Subscribe<SteamUser.LoggedOnCallback>(OnLoggedOn);
             manager.Subscribe<SteamUser.LoggedOffCallback>(OnLoggedOff);
-            manager.Subscribe<SteamUser.UpdateMachineAuthCallback>(OnMachineAuth);
-            manager.Subscribe<SteamUser.LoginKeyCallback>(OnKeyCallback);
 
         }
 
@@ -53,41 +50,64 @@ namespace steam_dropler.Steam
         }
 
 
-
-        private void OnKeyCallback(SteamUser.LoginKeyCallback obj)
+        async void OnConnected(SteamClient.ConnectedCallback callback)
         {
-            _steamAccount.LoginKey = obj.LoginKey;
-            _steamAccount.Save();
-        }
-
-
-        void OnConnected(SteamClient.ConnectedCallback callback)
-        {
-            Console.Write("Connected to Steam! Logging in '{0}'...", _steamAccount.Name);
             
-            byte[] sentryHash = null;
-            string loginKey = null;
-            if (_steamAccount.SentryHash != null)
+            Console.Write("Connected to Steam! Logging in '{0}'...", _steamAccount.Name);
+
+
+            if (_steamAccount.AccessToken != null)
+            {
+                _sUser.LogOn(new SteamUser.LogOnDetails
+                {
+                    Username = _steamAccount.Name,
+                    AccessToken = _steamAccount.AccessToken,
+                    ShouldRememberPassword = true
+                });
+            }
+            else
             {
 
-                sentryHash = _steamAccount.SentryHash;
+                IAuthenticator auth;
+                switch (_steamAccount.AuthType)
+                {
+                    case AuthType.Console:
+                        auth = new UserConsoleAuthenticator();
+                        break;
+                   
+                    case AuthType.WithSecretKey:
+                        auth = new TwoFactorAuth(_steamAccount.SharedSecret ?? _steamAccount.MobileAuth.SharedSecret);
+                        break;
+
+                    case AuthType.Device:
+                    default:
+                        auth = new DeviceAuth();
+                        break;
+
+                }
+                
+                var authSession = await _client.Authentication.BeginAuthSessionViaCredentialsAsync(new AuthSessionDetails
+                {
+                    Username = _steamAccount.Name,
+                    Password = _steamAccount.Password,
+                    ClientOSType = EOSType.Windows10,
+                    DeviceFriendlyName = _steamAccount.Name + "pc",
+                    PlatformType = EAuthTokenPlatformType.k_EAuthTokenPlatformType_SteamClient,
+                    IsPersistentSession = true,
+                    WebsiteID = "Client",
+                    Authenticator = auth,
+                });
+                
+                var pollResponse = await authSession.PollingWaitForResultAsync();
+                _refreshToken = pollResponse.RefreshToken;
+                _sUser.LogOn(new SteamUser.LogOnDetails
+                {
+                    Username = pollResponse.AccountName,
+                    AccessToken = pollResponse.RefreshToken,
+                    ShouldRememberPassword = true
+                });
             }
-            if (_steamAccount.LoginKey != null)
-            {
-                loginKey = _steamAccount.LoginKey;
-            }
-            _sUser.LogOn(new SteamUser.LogOnDetails
-            {
-                Username = _steamAccount.Name,
-                Password = _steamAccount.Password,
-                LoginKey = loginKey,
-                AuthCode = _authCode,
-                TwoFactorCode = _twoFactorAuth,
-                SentryFileHash = sentryHash,
-                ShouldRememberPassword = true,
-            });
-            _authCode = null;
-            _twoFactorAuth = null;
+
         }
 
 
@@ -102,40 +122,18 @@ namespace steam_dropler.Steam
         void OnLoggedOn(SteamUser.LoggedOnCallback callback)
         {
             Console.WriteLine(callback.Result);
-            bool isSteamGuard = callback.Result == EResult.AccountLogonDenied;
-            bool is2Fa = callback.Result == EResult.AccountLoginDeniedNeedTwoFactor;
+
             tryLoginCount++;
             if (tryLoginCount > 5)
             {
                 _loginTcs?.SetResult(callback.Result);
-            }
-            if (isSteamGuard || is2Fa)
-            {
-
-                // Console.WriteLine("This account is SteamGuard protected!");
-
-                if (is2Fa)
-                {
-
-                    _twoFactorAuth = _steamAccount.MobileAuth.GenerateSteamGuardCode();
-                    if (_twoFactorAuth == null)
-                    {
-                        Console.WriteLine($"{_steamAccount.Name}: MobileSteamGuard настроен не верно");
-                    }
-                }
-                else
-                {
-                    throw new NotImplementedException("Not inplemented auth code. Only mobile auth");
-                    
-                }
-                return;
             }
 
             if (callback.Result != EResult.OK)
             {
                 if (callback.Result == EResult.InvalidPassword)
                 {
-                    _steamAccount.LoginKey = null;
+                    _steamAccount.SharedSecret = null;
                     _steamAccount.Save();
                 }
                 else if (callback.Result == EResult.NoConnection)
@@ -148,64 +146,16 @@ namespace steam_dropler.Steam
                 return;
             }
             _steamAccount.SteamId = _client.SteamID;
+            _steamAccount.AccessToken = _refreshToken;
             Console.WriteLine("Successfully logged on!");
             _loginTcs?.SetResult(callback.Result);
-
-            
-
-
-
         }
 
 
         void OnLoggedOff(SteamUser.LoggedOffCallback callback)
         {
             Console.WriteLine("Logged off of Steam: {0}", callback.Result);
-
         }
-
-
-        void OnMachineAuth(SteamUser.UpdateMachineAuthCallback callback)
-        {
-           // Console.WriteLine("Updating sentryfile...");
-
-            int fileSize;
-            byte[] sentryHash;
-            // using (var fs = File.Open(_steamAccount.UserName + "sentry.bin", FileMode.OpenOrCreate, FileAccess.ReadWrite))
-            using (var fs = new MemoryStream())
-            {
-                fs.Seek(callback.Offset, SeekOrigin.Begin);
-                fs.Write(callback.Data, 0, callback.BytesToWrite);
-                fileSize = (int)fs.Length;
-
-                fs.Seek(0, SeekOrigin.Begin);
-                using (var sha = SHA1.Create())
-                {
-                    sentryHash = sha.ComputeHash(fs);
-                    _steamAccount.SentryHash = sentryHash;
-                }
-            }
-
-            _sUser.SendMachineAuthResponse(new SteamUser.MachineAuthDetails
-            {
-                JobID = callback.JobID,
-
-                FileName = callback.FileName,
-
-                BytesWritten = callback.BytesToWrite,
-                FileSize = fileSize,
-                Offset = callback.Offset,
-
-                Result = EResult.OK,
-                LastError = 0,
-
-                OneTimePassword = callback.OneTimePassword,
-
-                SentryFileHash = sentryHash,
-            });
-
-            //Console.WriteLine("Done!");
-        }
-
+        
     }
 }

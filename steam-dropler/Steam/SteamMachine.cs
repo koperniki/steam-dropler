@@ -8,7 +8,6 @@ using Newtonsoft.Json;
 using steam_dropler.Model;
 using SteamKit2;
 using SteamKit2.Internal;
-using SteamKit2.Unified.Internal;
 
 namespace steam_dropler.Steam
 {
@@ -65,13 +64,15 @@ namespace steam_dropler.Steam
         public async Task<EResult> EasyIdling()
         {
 
+            _steamAccount.IdleNow = true;
+            _steamAccount.Save();
+            
             var res = await _loginHandler.Login(SteamServerList.GetServerRecord());
 
             if (res == EResult.OK)
             {
 
                 _steamAccount.LastRun = DateTime.UtcNow;
-                _steamAccount.IdleNow = true;
                 _steamAccount.Save();
 
                 var appId = _steamAccount.AppIds;
@@ -91,10 +92,10 @@ namespace steam_dropler.Steam
                 }
 
                 
-                _steamAccount.IdleNow = false;
-                _steamAccount.Save();
+               
             }
-
+            _steamAccount.IdleNow = false;
+            _steamAccount.Save();
             return res;
         }
 

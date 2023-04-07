@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "steam-dropler", "steam-drop
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SteamKit2", "SteamKit\SteamKit2\SteamKit2\SteamKit2.csproj", "{4B2B0365-DE37-4B65-B614-3E4E7C05147D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Runner", "Runner\Runner.csproj", "{81A5A47D-5A28-420D-BB6E-FAB39F0E9407}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Runner", "Runner\Runner.csproj", "{161498B8-0866-4270-A755-9043954E642E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{4B2B0365-DE37-4B65-B614-3E4E7C05147D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B2B0365-DE37-4B65-B614-3E4E7C05147D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B2B0365-DE37-4B65-B614-3E4E7C05147D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{81A5A47D-5A28-420D-BB6E-FAB39F0E9407}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{81A5A47D-5A28-420D-BB6E-FAB39F0E9407}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{81A5A47D-5A28-420D-BB6E-FAB39F0E9407}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{81A5A47D-5A28-420D-BB6E-FAB39F0E9407}.Release|Any CPU.Build.0 = Release|Any CPU
+		{161498B8-0866-4270-A755-9043954E642E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{161498B8-0866-4270-A755-9043954E642E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{161498B8-0866-4270-A755-9043954E642E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{161498B8-0866-4270-A755-9043954E642E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

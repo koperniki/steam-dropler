@@ -1,12 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <AssemblyName>Runner</AssemblyName>
+        <RootNamespace>Runner</RootNamespace>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\steam-dropler\steam-dropler.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\steam-dropler\steam-dropler.csproj" />
+    </ItemGroup>
 
 </Project>
