@@ -86,21 +86,21 @@ namespace steam_dropler.Steam
                         break;
 
                 }
-                
-                var authSession = await _client.Authentication.BeginAuthSessionViaCredentialsAsync(new AuthSessionDetails
-                {
-                    Username = _steamAccount.Name,
-                    Password = _steamAccount.Password,
-                    ClientOSType = EOSType.Windows10,
-                    DeviceFriendlyName = _steamAccount.Name + "pc",
-                    PlatformType = EAuthTokenPlatformType.k_EAuthTokenPlatformType_SteamClient,
-                    IsPersistentSession = true,
-                    WebsiteID = "Client",
-                    Authenticator = auth,
-                });
-
                 try
                 {
+                    var authSession = await _client.Authentication.BeginAuthSessionViaCredentialsAsync(new AuthSessionDetails
+                    {
+                        Username = _steamAccount.Name,
+                        Password = _steamAccount.Password,
+                        ClientOSType = EOSType.Windows10,
+                        DeviceFriendlyName = _steamAccount.Name + "pc",
+                        PlatformType = EAuthTokenPlatformType.k_EAuthTokenPlatformType_SteamClient,
+                        IsPersistentSession = true,
+                        WebsiteID = "Client",
+                        Authenticator = auth,
+                    });
+
+                
                     var pollResponse = await authSession.PollingWaitForResultAsync();
                     _refreshToken = pollResponse.RefreshToken;
                     _sUser.LogOn(new SteamUser.LogOnDetails
