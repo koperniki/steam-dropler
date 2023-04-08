@@ -23,6 +23,11 @@ namespace steam_dropler
 
         private static Timer _timer;
 
+        static Worker()
+        {
+            _accounts = new List<AccountConfig>();
+        }
+
         public static void Start()
         {
             _timer = new Timer(1000 * MainConfig.Config.StartTimeOut);

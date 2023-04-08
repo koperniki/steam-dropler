@@ -20,7 +20,7 @@ namespace steam_dropler.Model
 
         public TimeConfig TimeConfig { get; set; }
 
-        public int StartTimeOut { get; set; }
+        public int StartTimeOut { get; set; } = 30;
 
         public bool ShortDrop { get; set; } = true;
         
