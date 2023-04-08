@@ -15,9 +15,9 @@ namespace steam_dropler
     {
         private const string AccountPath = "Configs\\Accounts";
 
-        private static HashSet<AccountConfig> _accounts;
+        private static List<AccountConfig> _accounts;
 
-	    private static Dictionary<string, MobileAuth> _mobileAuths;
+        private static Dictionary<string, MobileAuth> _mobileAuths;
 
         private static readonly Dictionary<string, Task> TaskDictionary = new Dictionary<string, Task>();
 
@@ -25,23 +25,20 @@ namespace steam_dropler
 
         public static void Start()
         {
-
-            
-
             _timer = new Timer(1000 * MainConfig.Config.StartTimeOut);
             _timer.Elapsed += CheckToAdd;
             _timer.Start();
             Console.WriteLine($"Аккаунты запускаются с переодичностью {MainConfig.Config.StartTimeOut} секунд.");
-            Console.WriteLine($"Всего аккаунтов {_accounts.Count}, будут фармиться {_accounts.Count(t=>t.IdleEnable && t.MobileAuth?.SharedSecret!=null)}");
-
+            Console.WriteLine(
+                $"Всего аккаунтов {_accounts.Count}, будут фармиться {_accounts.Count(t => t.IdleEnable && t.MobileAuth?.SharedSecret != null)}");
         }
 
         public static void Run()
         {
             MainConfig.Load();
             LoadAccounts();
-	        LoadMaFiles();
-	        SetMaFiles();
+            LoadMaFiles();
+            SetMaFiles();
             Start();
         }
 
@@ -52,17 +49,22 @@ namespace steam_dropler
                 return;
             }
 
-            var steamaccont = _accounts.FirstOrDefault(t =>
-                t.LastRun < DateTime.UtcNow.AddHours(-t.TimeConfig.PauseBeatwinIdleTime) & t.IdleEnable && !t.IdleNow);
+            var errorCoolDown = MainConfig.Config.CoolDownAfterLoginError;
+            var steamAccount = _accounts.FirstOrDefault(t =>
+                t.LastRun < DateTime.UtcNow.AddMinutes(-t.TimeConfig.PauseBeatwinIdleTime)
+                && t.IdleEnable
+                && !t.IdleNow
+                && (t.LastLoginErrorTime == null || DateTime.UtcNow.AddSeconds(-errorCoolDown) > t.LastLoginErrorTime));
 
-            if (steamaccont != null)
+            if (steamAccount != null)
             {
-                AddToIdlingQueue(steamaccont);
+                _accounts.Remove(steamAccount);
+                _accounts.Add(steamAccount);
+
+                AddToIdlingQueue(steamAccount);
             }
-
         }
-
-
+        
         private static void AddToIdlingQueue(AccountConfig account)
         {
             var id = Guid.NewGuid().ToString();
@@ -71,12 +73,13 @@ namespace steam_dropler
             {
                 try
                 {
-                    var machine = new SteamMachine(account);
+                    var machine = new SteamMachine(account, MainConfig.Config);
                     var result = await machine.EasyIdling();
                     if (result != EResult.OK)
                     {
                         Console.WriteLine($"not login {result}");
                     }
+
                     machine.LogOf();
                     TaskDictionary.Remove(id);
                 }
@@ -85,68 +88,63 @@ namespace steam_dropler
                     Console.WriteLine(e);
                     throw;
                 }
-                
             });
-
-
         }
 
         private static void LoadAccounts()
         {
-            _accounts = new HashSet<AccountConfig>(new AccontConfigComparer());
+            var accounts = new HashSet<AccountConfig>(new AccontConfigComparer());
 
-	        if (Directory.Exists(AccountPath))
-	        {
-		        var jsonPaths = Directory.GetFiles(AccountPath).Where(t => Path.GetExtension(t) == ".json");
+            if (Directory.Exists(AccountPath))
+            {
+                var jsonPaths = Directory.GetFiles(AccountPath).Where(t => Path.GetExtension(t) == ".json");
 
-		        foreach (var jsonPath in jsonPaths)
-		        {
-			        _accounts.Add(new AccountConfig(jsonPath));
-		        }
-                
-	        }
-	        else
-	        {
-		        throw new Exception("Account folder not exist");
-	        }
+                foreach (var jsonPath in jsonPaths)
+                {
+                    accounts.Add(new AccountConfig(jsonPath));
+                }
+            }
+            else
+            {
+                throw new Exception("Account folder not exist");
+            }
 
+            _accounts.AddRange(accounts.OrderBy(t => t.LastRun));
         }
 
-	    private static void LoadMaFiles()
-	    {			
-			var objects = new List<MobileAuth>();
-		    if (!string.IsNullOrEmpty(MainConfig.Config.MaFileFolder) && Directory.Exists(MainConfig.Config.MaFileFolder))
-		    {
-				var maFilePaths = Directory.GetFiles(MainConfig.Config.MaFileFolder).Where(t => Path.GetExtension(t) == ".maFile");
+        private static void LoadMaFiles()
+        {
+            var objects = new List<MobileAuth>();
+            if (!string.IsNullOrEmpty(MainConfig.Config.MaFileFolder) &&
+                Directory.Exists(MainConfig.Config.MaFileFolder))
+            {
+                var maFilePaths = Directory.GetFiles(MainConfig.Config.MaFileFolder)
+                    .Where(t => Path.GetExtension(t) == ".maFile");
 
-			    foreach (var maFile in maFilePaths)
-			    {
-				    var obj = JsonConvert.DeserializeObject<MobileAuth>(File.ReadAllText(maFile));
-					objects.Add(obj);
-			    }
-			    _mobileAuths = objects.ToDictionary(t => t.AccountName, t => t);
+                foreach (var maFile in maFilePaths)
+                {
+                    var obj = JsonConvert.DeserializeObject<MobileAuth>(File.ReadAllText(maFile));
+                    objects.Add(obj);
+                }
 
-		    }
-		    else
-		    {
+                _mobileAuths = objects.ToDictionary(t => t.AccountName, t => t);
+            }
+            else
+            {
                 _mobileAuths = new Dictionary<string, MobileAuth>();
-			    Console.WriteLine("MaFile folder not exist");
-		    }
+                Console.WriteLine("MaFile folder not exist");
+            }
+        }
 
-		}
-
-	    private static void SetMaFiles()
-	    {
-		    foreach (var accountConfig in _accounts)
-		    {
-			    if (_mobileAuths.ContainsKey(accountConfig.Name))
-			    {
-				    accountConfig.MobileAuth = _mobileAuths[accountConfig.Name];
-			    }
-		    }
-	    }
-
-
-
+        private static void SetMaFiles()
+        {
+            foreach (var accountConfig in _accounts)
+            {
+                if (_mobileAuths.ContainsKey(accountConfig.Name))
+                {
+                    accountConfig.MobileAuth = _mobileAuths[accountConfig.Name];
+                }
+            }
+        }
     }
 }

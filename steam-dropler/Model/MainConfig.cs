@@ -22,6 +22,10 @@ namespace steam_dropler.Model
 
         public int StartTimeOut { get; set; }
 
+        public bool ShortDrop { get; set; } = true;
+        
+        public int CoolDownAfterLoginError { get; set; } = 120;
+
         public static void Load()
         {
             var obj = JsonConvert.DeserializeObject<MainConfig>(File.ReadAllText(ConfigPath));

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -25,6 +24,7 @@ namespace steam_dropler.Steam
 
 
         private readonly AccountConfig _steamAccount;
+        private readonly MainConfig _mainConfig;
         private readonly SteamLoginHandler _loginHandler;
         private readonly SteamClient _client;
         private readonly SteamApps _steamApps;
@@ -34,7 +34,7 @@ namespace steam_dropler.Steam
 
         private bool _work = true;
 
-        public SteamMachine(AccountConfig steamAccount)
+        public SteamMachine(AccountConfig steamAccount, MainConfig mainConfig)
         {
             _client = new SteamClient();
             SteamConfiguration = _client.Configuration;
@@ -45,6 +45,7 @@ namespace steam_dropler.Steam
             _inventoryService = steamUnifiedMessages.CreateService<IInventory>();
             _deviceService = steamUnifiedMessages.CreateService<IDeviceAuth>();
             _steamAccount = steamAccount;
+            _mainConfig = mainConfig;
             _loginHandler = new SteamLoginHandler(_steamAccount, _client, manager);
             _steamApps = _client.GetHandler<SteamApps>();
 
@@ -71,7 +72,6 @@ namespace steam_dropler.Steam
 
             if (res == EResult.OK)
             {
-
                 _steamAccount.LastRun = DateTime.UtcNow;
                 _steamAccount.Save();
 
@@ -79,13 +79,11 @@ namespace steam_dropler.Steam
 
                 if (appId.Any())
                 {
-
-
                     for (int i = 0; i < _steamAccount.TimeConfig.IdleTime / 30; i++)
                     {
                         PlayGames(appId);
                         await CheckTimeItemsList(_steamAccount.DropConfig);
-                        Thread.Sleep(1000 * 60 * 30);
+                        await Task.Delay(1000 * 60 * 30);
                     }
                     await CheckTimeItemsList(_steamAccount.DropConfig);
                     StopGame();
@@ -152,19 +150,27 @@ namespace steam_dropler.Steam
                     try
                     {
                         var items = JsonConvert.DeserializeObject<DropResult[]>(result.item_json);
+                        
+                        
                         foreach (var item in items)
                         {
                             Util.LogDrop(_steamAccount.Name, pair.Item1, item);
+                            
+                            if (_mainConfig.ShortDrop)
+                            {
+                                Console.WriteLine($"[{_steamAccount.Name}] drop:{pair.Item1} itemDef:{item.ItemDefId}");
+                            }
                         }
-                        
+
+                        if (!_mainConfig.ShortDrop)
+                        {
+                            Console.WriteLine($"Item droped {_client.SteamID} game:{pair.Item1}\n{result.item_json}\n");
+                        }
                     }
                     catch (Exception e)
                     {
                         Console.WriteLine(e);
                     }
-
-
-                    Console.WriteLine($"Item droped {_client.SteamID} game:{pair.Item1}\n{result.item_json}\n");
                 }
 
             }
@@ -197,8 +203,5 @@ namespace steam_dropler.Steam
             _client.Send(games);
 
         }
-
-
-
     }
 }

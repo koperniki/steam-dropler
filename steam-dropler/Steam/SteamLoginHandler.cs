@@ -112,6 +112,8 @@ namespace steam_dropler.Steam
                 }
                 catch (Exception e)
                 {
+                    _steamAccount.LastLoginErrorTime = DateTime.UtcNow;
+                    _steamAccount.Save();
                     Console.WriteLine("Exception while logon to Steam: {0}", e.Message);
                     _loginTcs?.TrySetResult(EResult.UnexpectedError);
                 }
@@ -122,9 +124,6 @@ namespace steam_dropler.Steam
         void OnDisconnected(SteamClient.DisconnectedCallback callback)
         {
             Console.WriteLine("Disconnected from Steam");
-            Thread.Sleep(TimeSpan.FromSeconds(5));
-            _client.Connect(_serverRecord);
-
         }
 
         void OnLoggedOn(SteamUser.LoggedOnCallback callback)
@@ -139,9 +138,9 @@ namespace steam_dropler.Steam
 
             if (callback.Result != EResult.OK)
             {
-                if (callback.Result == EResult.InvalidPassword)
+                if (callback.Result == EResult.Expired)
                 {
-                    _steamAccount.SharedSecret = null;
+                    _steamAccount.AccessToken = null;
                     _steamAccount.Save();
                 }
                 else if (callback.Result == EResult.NoConnection)

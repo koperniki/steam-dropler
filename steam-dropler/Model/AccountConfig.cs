@@ -79,7 +79,9 @@ namespace steam_dropler.Model
         /// Способ авторизации
         /// </summary>
         public AuthType AuthType { get; set; } = AuthType.WithSecretKey;
-        
+
+        public DateTime? LastLoginErrorTime { get; set; }
+
         /// <summary>
         /// Конструктор для json
         /// </summary>
@@ -99,28 +101,20 @@ namespace steam_dropler.Model
             SteamId = obj.SteamId;
             IdleEnable = obj.IdleEnable;
             DropConfig = obj.DropConfig ?? new List<(uint, ulong)>();
-            IdleNow = obj.IdleNow;
+            IdleNow = false;
             LastRun = obj.LastRun ?? DateTime.MinValue;
             AccessToken = obj.AccessToken;
             SharedSecret = obj.SharedSecret;
             AuthType = obj.AuthType;
+            LastLoginErrorTime = obj.LastLoginErrorTime;
+            TimeConfig = obj.TimeConfig ?? MainConfig.Config.TimeConfig ?? new TimeConfig {IdleTime = 60,  PauseBeatwinIdleTime = 660} ;
             if (SharedSecret != null)
             {
                 MobileAuth = new MobileAuth {SharedSecret = obj.SharedSecret};
             }
 
-            if (IdleNow )
-            {
-                IdleNow = false;
-                if ((DateTime.UtcNow - LastRun.Value).TotalHours < 10)
-                {
-                    LastRun = DateTime.MinValue;
-                }
-            }
-
-
             Name = Path.GetFileNameWithoutExtension(path);
-            TimeConfig = obj.TimeConfig ?? MainConfig.Config.TimeConfig ?? new TimeConfig {IdleTime = 60,  PauseBeatwinIdleTime = 660} ;
+         
             FilePath = path;
         }
 
@@ -129,7 +123,7 @@ namespace steam_dropler.Model
         /// </summary>
         public void Save()
         {
-            File.WriteAllText(FilePath, JsonConvert.SerializeObject(this));
+            File.WriteAllText(FilePath, JsonConvert.SerializeObject(this, Formatting.Indented));
         }
 
     }
