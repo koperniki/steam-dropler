@@ -13,7 +13,7 @@ namespace steam_dropler
 {
     public static class Worker
     {
-        private const string AccountPath = "Configs\\Accounts";
+        private static string AccountPath = Path.Combine("Configs", "Accounts");
 
         private static List<AccountConfig> _accounts;
 

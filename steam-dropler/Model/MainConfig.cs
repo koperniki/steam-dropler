@@ -7,7 +7,7 @@ namespace steam_dropler.Model
 {
     public class MainConfig
     {
-        private const string ConfigPath = "Configs\\MainConfig.json";
+        private static string ConfigPath = Path.Combine("Configs", "MainConfig.json");
 
         [JsonIgnore]
         public static MainConfig Config { get; set; }
